@@ -58,12 +58,14 @@ var initAuth = true
 const onAuthRequired = async (from, to, next) => {
   if (initAuth) {
     initAuth = false
-    var data = await PublicConfig.getPublicConfig(subdomain)
-    if (Object.keys(data).length > 0) {
-      oktaAuthConfig.oidc.issuer=data.iss
-      oktaAuthConfig.oidc.client_id=data.clientId
-      if (!isRunningLocal)
+
+    if (!isRunningLocal) {
+      var data = await PublicConfig.getPublicConfig(subdomain)
+      if (Object.keys(data).length > 0) {
+        oktaAuthConfig.oidc.issuer=data.iss
+        oktaAuthConfig.oidc.client_id=data.clientId
         oktaAuthConfig.oidc.redirect_uri='https://'+subdomain+'.sample.unidemo.online/implicit/callback'
+      }
     }
 
     Vue.use(Auth, {
